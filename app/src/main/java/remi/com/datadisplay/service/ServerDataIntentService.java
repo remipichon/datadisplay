@@ -4,8 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
+import remi.com.datadisplay.DummyStorage;
 import remi.com.datadisplay.model.Review;
 import remi.com.datadisplay.model.ReviewsDTO;
 import retrofit.Call;
@@ -43,10 +44,12 @@ public class ServerDataIntentService extends IntentService {
         System.out.println("reviewsDTO size " + reviewsDTO.getReviews().size());
 
         //convert DTO data to model
-        List<Review> reviews = DTOConverterService.fromDTO(reviewsDTO.getReviews());
+        ArrayList<Review> reviews = DTOConverterService.fromDTO(reviewsDTO.getReviews());
 
         //hand data back to Activity to display
+        //TODO what to do whi data ?
         System.out.println("reviews" + reviews);
+        DummyStorage.reviews = reviews;
 
     }
 }

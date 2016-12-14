@@ -1,5 +1,7 @@
 package remi.com.datadisplay;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +16,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import remi.com.datadisplay.fragment.ListFragment;
 import remi.com.datadisplay.service.ServerDataIntentService;
 
 public class MainActivity extends AppCompatActivity
@@ -89,10 +95,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
+        if (id == R.id.nav_maps) {
+        } else if (id == R.id.nav_list) {
+            this.startFragment(ListFragment.class);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -106,5 +111,26 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    void startFragment(Class fragmentClassName) {
+        System.out.println("start fragment "+fragmentClassName.getName());
+        Fragment fragment = null;
+        try {
+            Constructor<?> ctor = fragmentClassName.getConstructor();
+            fragment = (Fragment) ctor.newInstance(new Object[]{});
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment).commit();
     }
 }

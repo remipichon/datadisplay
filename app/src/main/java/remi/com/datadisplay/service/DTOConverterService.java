@@ -10,8 +10,8 @@ import remi.com.datadisplay.model.ReviewDTO;
 
 public class DTOConverterService {
 
-    public static List<Review> fromDTO(List<ReviewDTO> reviewsDTO) {
-        List<Review> result = new ArrayList<>();
+    public static ArrayList<Review> fromDTO(List<ReviewDTO> reviewsDTO) {
+        ArrayList<Review> result = new ArrayList<>();
 
         for (ReviewDTO reviewDTO : reviewsDTO) {
             result.add(new Review(
