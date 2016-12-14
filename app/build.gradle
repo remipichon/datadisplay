@@ -27,4 +27,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.+'
     compile 'com.android.support:design:25.+'
     testCompile 'junit:junit:4.12'
+
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    compile 'com.google.android.gms:play-services:9.8.0'
+
+
 }
