@@ -1,4 +1,4 @@
-package remi.com.datadisplay;
+package com.remi.datadisplay;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -16,11 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.remi.datadisplay.fragment.ListFragment;
+import com.remi.datadisplay.service.ServerDataIntentService;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import remi.com.datadisplay.fragment.ListFragment;
-import remi.com.datadisplay.service.ServerDataIntentService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

@@ -1,4 +1,4 @@
-package remi.com.datadisplay.fragment;
+package com.remi.datadisplay.fragment;
 
 
 import android.app.Fragment;
@@ -9,14 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.remi.datadisplay.DummyStorage;
+import com.remi.datadisplay.R;
+import com.remi.datadisplay.adapter.ReviewAdapter;
+import com.remi.datadisplay.model.Review;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import remi.com.datadisplay.DummyStorage;
-import remi.com.datadisplay.R;
-import remi.com.datadisplay.adapter.ReviewAdapter;
-import remi.com.datadisplay.model.Review;
 
 public class ListFragment extends Fragment {
 

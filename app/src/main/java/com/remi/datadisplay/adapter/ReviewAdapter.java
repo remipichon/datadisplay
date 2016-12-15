@@ -1,5 +1,4 @@
-package remi.com.datadisplay.adapter;
-
+package com.remi.datadisplay.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.remi.datadisplay.R;
+import com.remi.datadisplay.model.Review;
 
-import remi.com.datadisplay.R;
-import remi.com.datadisplay.model.Review;
+import java.util.ArrayList;
 
 public class ReviewAdapter extends ArrayAdapter<Review> {
     LayoutInflater vi;
@@ -25,7 +24,6 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
 
         this.vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -53,7 +51,6 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
         return convertView;
 
     }
-
 
 
     private class ViewHolder {

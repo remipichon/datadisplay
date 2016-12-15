@@ -1,4 +1,4 @@
-package remi.com.datadisplay.model;
+package com.remi.datadisplay.model;
 
 import java.io.Serializable;
 

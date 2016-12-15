@@ -1,6 +1,7 @@
-package remi.com.datadisplay.service;
+package com.remi.datadisplay.service;
 
-import remi.com.datadisplay.model.ReviewsDTO;
+import com.remi.datadisplay.model.ReviewsDTO;
+
 import retrofit.Call;
 import retrofit.http.GET;
 

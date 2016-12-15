@@ -1,9 +1,10 @@
-package remi.com.datadisplay;
+package com.remi.datadisplay;
 
+
+import com.remi.datadisplay.model.Review;
 
 import java.util.ArrayList;
 
-import remi.com.datadisplay.model.Review;
 
 public class DummyStorage {
 

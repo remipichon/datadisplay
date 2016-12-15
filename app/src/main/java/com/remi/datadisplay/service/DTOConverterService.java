@@ -1,12 +1,12 @@
-package remi.com.datadisplay.service;
+package com.remi.datadisplay.service;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.remi.datadisplay.model.Review;
+import com.remi.datadisplay.model.ReviewDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import remi.com.datadisplay.model.Review;
-import remi.com.datadisplay.model.ReviewDTO;
 
 public class DTOConverterService {
 

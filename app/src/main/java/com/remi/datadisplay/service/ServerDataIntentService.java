@@ -1,14 +1,15 @@
-package remi.com.datadisplay.service;
+package com.remi.datadisplay.service;
 
 import android.app.IntentService;
 import android.content.Intent;
 
+import com.remi.datadisplay.DummyStorage;
+import com.remi.datadisplay.model.Review;
+import com.remi.datadisplay.model.ReviewsDTO;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
-import remi.com.datadisplay.DummyStorage;
-import remi.com.datadisplay.model.Review;
-import remi.com.datadisplay.model.ReviewsDTO;
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
