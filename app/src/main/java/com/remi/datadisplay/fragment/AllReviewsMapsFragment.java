@@ -16,11 +16,8 @@ public class AllReviewsMapsFragment extends MapsFragment  {
     @Override
     public void onMapReady(GoogleMap map) {
         super.onMapReady(map);
-//        googleMap = map;
 
         setUpCluster();
-
-//        mMapView.onResume();
     }
 
     private void setUpCluster() {

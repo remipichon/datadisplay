@@ -1,12 +1,18 @@
 package com.remi.datadisplay.fragment;
 
 
+import android.support.annotation.NonNull;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.remi.datadisplay.DummyStorage;
+import com.remi.datadisplay.model.AverageRating;
 import com.remi.datadisplay.model.Review;
 
 import java.text.DecimalFormat;
@@ -17,19 +23,30 @@ import java.util.Map;
 
 public class AverageRatingMapsFragment extends MapsFragment {
 
+    ClusterManager<AverageRating> mClusterManager;
+
 
     @Override
     public void onMapReady(GoogleMap map) {
         super.onMapReady(map);
-
-//        googleMap = map;
-
-        addItem();
-
-//        mMapView.onResume();
+        setUpCluster();
     }
 
-    private void addItem() {
+    private void setUpCluster() {
+        // Initialize the manager with the context and the map.
+        mClusterManager = new ClusterManager<AverageRating>(this.getActivity(), googleMap);
+
+        mClusterManager.setRenderer(new AverageRatingRendered());
+
+        // Point the map's listeners at the listeners implemented by the cluster manager.
+        googleMap.setOnCameraIdleListener(mClusterManager);
+        googleMap.setOnMarkerClickListener(mClusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+        addItems();
+    }
+
+    private void addItems() {
 
         ArrayList<Review> reviews = DummyStorage.reviews;
 
@@ -44,7 +61,7 @@ public class AverageRatingMapsFragment extends MapsFragment {
 
                 ratingByCities.put(review.getCity(), ratings);
 
-                citiesApproxLoc.put(review.getCity(),review.getLocation());
+                citiesApproxLoc.put(review.getCity(), review.getLocation());
             } else {
                 ratingByCities.get(review.getCity()).add(review.getRating());
             }
@@ -54,42 +71,59 @@ public class AverageRatingMapsFragment extends MapsFragment {
         for (Map.Entry<String, List<Integer>> entry : ratingByCities.entrySet()) {
             String city = entry.getKey();
             List<Integer> ratings = entry.getValue();
-            Double total = 0.0; //overkill uh ?
-            for (Integer rating : ratings) {
-                total += rating;
-            }
-            averageRatingByCities.put(city,new Float(total / ratings.size()));
+            Float average = getAverage(ratings);
+            averageRatingByCities.put(city, average);
         }
 
         //display average on maps
-        System.out.println("average ratings");
         for (Map.Entry<String, Float> entry : averageRatingByCities.entrySet()) {
             String city = entry.getKey();
             Float average = entry.getValue();
-            if(city == null) continue;
+            if (city == null) continue;
             LatLng position = citiesApproxLoc.get(city);
 
-            System.out.println(city + " " + average + " " + position);
+            mClusterManager.addItem(new AverageRating(position, average, city));
+        }
+    }
 
-            IconGenerator iconFactory = new IconGenerator(this.getActivity());
-            iconFactory.setStyle(IconGenerator.STYLE_PURPLE);
-            addIcon(iconFactory, city + " " + new DecimalFormat("#.##").format(average) + "/5", position);
+    @NonNull
+    private Float getAverage(List<Integer> ratings) {
+        Double total = 0.0; //overkill uh ?
+        for (Integer rating : ratings) {
+            total += rating;
+        }
+        return new Float(total / ratings.size());
+    }
 
+
+    private class AverageRatingRendered extends DefaultClusterRenderer<AverageRating> {
+        IconGenerator iconFactory = new IconGenerator(getActivity());
+
+        public AverageRatingRendered() {
+            super(getActivity(), googleMap, mClusterManager);
         }
 
+        @Override
+        protected void onBeforeClusterItemRendered(AverageRating averageRating, MarkerOptions markerOptions) {
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(new DecimalFormat("#.##").format(averageRating.getAverageRating()))));
+        }
 
+        @Override
+        protected void onBeforeClusterRendered(Cluster<AverageRating> cluster, MarkerOptions markerOptions) {
+            Double sum  = 0.0;
+            for (AverageRating averageRating : cluster.getItems()) {
+                sum += averageRating.getAverageRating();
+            }
+            Double wrapperAverage = sum / cluster.getItems().size();
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(new DecimalFormat("#.##").format(wrapperAverage))));
+        }
+
+        @Override
+        protected boolean shouldRenderAsCluster(Cluster cluster) {
+            // Always render clusters.
+            return cluster.getSize() > 1;
+        }
     }
-
-    private void addIcon(IconGenerator iconFactory, CharSequence text, LatLng position) {
-        MarkerOptions markerOptions = new MarkerOptions().
-                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
-                position(position).
-                anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-
-        googleMap.addMarker(markerOptions);
-    }
-
-
 }
 
 
