@@ -18,7 +18,7 @@ import android.view.View;
 
 import com.remi.datadisplay.fragment.DoubleMapsFragment;
 import com.remi.datadisplay.fragment.ListFragment;
-import com.remi.datadisplay.fragment.MapsFragment;
+import com.remi.datadisplay.fragment.AllReviewsMapsFragment;
 import com.remi.datadisplay.service.ServerDataIntentService;
 
 import java.lang.reflect.Constructor;
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_maps) {
-            this.startFragment(MapsFragment.class);
+            this.startFragment(AllReviewsMapsFragment.class);
         } else if (id == R.id.nav_list) {
             this.startFragment(ListFragment.class);
         } else if (id == R.id.nav_slideshow) {

@@ -19,6 +19,7 @@ public class DTOConverterService {
                     reviewDTO.getComputed_browser().getVersion(),
                     reviewDTO.getComputed_browser().getPlatform(),
                     new LatLng(reviewDTO.getGeo().getLat(), reviewDTO.getGeo().getLon()),
+                    reviewDTO.getGeo().getCity(),
                     reviewDTO.getRating(),
                     reviewDTO.getLabels()
             ));

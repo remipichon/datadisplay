@@ -1,6 +1,5 @@
 package com.remi.datadisplay.fragment;
 
-
 import android.Manifest;
 import android.app.Fragment;
 import android.content.pm.PackageManager;
@@ -12,29 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.maps.android.clustering.ClusterManager;
-import com.remi.datadisplay.DummyStorage;
 import com.remi.datadisplay.R;
-import com.remi.datadisplay.model.Review;
-
-import java.util.ArrayList;
 
 import static com.remi.datadisplay.R.id.mapView;
 
-
-public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
-
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 24;
-    private MapView mMapView;
-    private GoogleMap googleMap;
-    ClusterManager<Review> mClusterManager;
-
+public abstract class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+    protected static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 24;
+    protected GoogleMap googleMap;
+    protected MapView mMapView;
 
     @Nullable
     @Override
@@ -51,17 +39,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
-        return false;
-    }
-
-    @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
 
-        setUpCluster();
+       // setUpCluster();
 
         mMapView.onResume();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
     }
 
     @Override
@@ -92,48 +80,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 return;
             }
 
-        }
-    }
-
-    private void setUpCluster() {
-
-        // Position the map.
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(52.379189, 4.899431), 10));
-
-        //display zoom button
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
-        //display my location button
-        if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this.getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_FINE_LOCATION);
-            }
-
-        }
-
-
-        // Initialize the manager with the context and the map.
-        mClusterManager = new ClusterManager<Review>(this.getActivity(), googleMap);
-
-        // Point the map's listeners at the listeners implemented by the cluster manager.
-        googleMap.setOnCameraIdleListener(mClusterManager);
-        googleMap.setOnMarkerClickListener(mClusterManager);
-
-        // Add cluster items (markers) to the cluster manager.
-        addItems();
-    }
-
-    private void addItems() {
-
-        ArrayList<Review> reviews = DummyStorage.reviews;
-        for (Review review : reviews) {
-            mClusterManager.addItem(review);
         }
     }
 }

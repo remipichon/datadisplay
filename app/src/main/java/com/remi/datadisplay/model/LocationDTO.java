@@ -5,6 +5,11 @@ import java.io.Serializable;
 public class LocationDTO  implements Serializable {
     Float lat;
     Float lon;
+    String city;
+
+    public String getCity() {
+        return city;
+    }
 
     public Float getLat() {
         return lat;

@@ -12,16 +12,22 @@ public class Review implements ClusterItem {
     private String browserVersion;
     private String platform;
     private LatLng location;
+    private String city;
     private Integer rating;
     private ArrayList<String> labels;
 
-    public Review(String browserName, String browserVersion, String platform, LatLng location, Integer rating, ArrayList<String> labels) {
+    public Review(String browserName, String browserVersion, String platform, LatLng location, String city, Integer rating, ArrayList<String> labels) {
         this.browserName = browserName;
         this.browserVersion = browserVersion;
         this.platform = platform;
         this.location = location;
+        this.city = city;
         this.rating = rating;
         this.labels = labels;
+    }
+
+    public String getCity() {
+        return city;
     }
 
     public String getBrowserName() {

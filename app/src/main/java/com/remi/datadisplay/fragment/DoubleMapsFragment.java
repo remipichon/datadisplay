@@ -39,9 +39,9 @@ public class DoubleMapsFragment extends Fragment  {
             public Fragment getItem(int position) {
                 Fragment fragment = null;
                 if(position == 0){
-                    fragment = new MapsFragment();
+                    fragment = new AllReviewsMapsFragment();
                 } else if(position == 1){
-                    fragment = new MapsFragment();
+                    fragment = new AverageRatingMapsFragment();
                 }
                 return fragment;
             }
