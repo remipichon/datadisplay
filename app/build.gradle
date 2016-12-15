@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "21.1.2"
     defaultConfig {
-        applicationId "remi.com.datadisplay"
+        applicationId "com.remi.datadisplay"
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
