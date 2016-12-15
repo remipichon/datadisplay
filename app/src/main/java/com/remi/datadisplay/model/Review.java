@@ -2,10 +2,11 @@ package com.remi.datadisplay.model;
 
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.ArrayList;
 
-public class Review {
+public class Review implements ClusterItem {
 
     private String browserName;
     private String browserVersion;
@@ -53,6 +54,11 @@ public class Review {
 
     public void setLocation(LatLng location) {
         this.location = location;
+    }
+
+    @Override
+    public LatLng getPosition() {
+        return this.location;
     }
 
     public Integer getRating() {
