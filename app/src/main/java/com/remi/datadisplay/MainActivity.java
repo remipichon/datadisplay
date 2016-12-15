@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.remi.datadisplay.fragment.DoubleMapsFragment;
 import com.remi.datadisplay.fragment.ListFragment;
 import com.remi.datadisplay.fragment.MapsFragment;
 import com.remi.datadisplay.service.ServerDataIntentService;
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_list) {
             this.startFragment(ListFragment.class);
         } else if (id == R.id.nav_slideshow) {
-
+            this.startFragment(DoubleMapsFragment.class);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
