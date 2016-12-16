@@ -72,13 +72,13 @@ public abstract class MapsFragment<A extends ClusterItem> extends Fragment imple
         mMapView.onResume();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(DataUpdated event) {
         ArrayList<Review> reviews = DummyStorage.reviews;
         addItems(reviews);
     };
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(BrowserFilterEvent event) {
         ArrayList<String> selectedBrowsers = event.getSelectedBrowsers();
 

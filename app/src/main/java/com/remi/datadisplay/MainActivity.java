@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startService(serverDataIntent);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(DataUpdated event) {
 
         setupPopup(findViewById(R.id.content_frame));
@@ -210,14 +210,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void chipSelected(int index) {
                         String browser = browsers[index];
                         selectedBrowsers.add(browser);
-                        EventBus.getDefault().post(new BrowserFilterEvent(selectedBrowsers));
+                        EventBus.getDefault().postSticky(new BrowserFilterEvent(selectedBrowsers));
 
                     }
                     @Override
                     public void chipDeselected(int index) {
                         String browser = browsers[index];
                         selectedBrowsers.remove(browser);
-                        EventBus.getDefault().post(new BrowserFilterEvent(selectedBrowsers));
+                        EventBus.getDefault().postSticky(new BrowserFilterEvent(selectedBrowsers));
 
                     }
                 })

@@ -1,7 +1,6 @@
 
 package com.remi.datadisplay.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -21,25 +20,29 @@ import com.github.mikephil.charting.components.YAxis.YAxisLabelPosition;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.remi.datadisplay.DummyStorage;
 import com.remi.datadisplay.R;
+import com.remi.datadisplay.event.BrowserFilterEvent;
+import com.remi.datadisplay.event.DataUpdated;
+import com.remi.datadisplay.filter.BrowserBarChartFilter;
 import com.remi.datadisplay.model.Review;
 import com.remi.datadisplay.util.MapUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BarChartFragment extends Fragment implements
-        OnChartValueSelectedListener {
+public class BarChartFragment extends Fragment {
 
     protected BarChart ratingChart;
     protected BarChart labelChart;
+    protected BrowserBarChartFilter browserBarChartFilter;
 
 
     @Nullable
@@ -52,17 +55,47 @@ public class BarChartFragment extends Fragment implements
         ratingChart = (BarChart) view.findViewById(R.id.rating_distribution_bar_chart);
         labelChart = (BarChart) view.findViewById(R.id.label_distribution_bar_chart);
 
+        browserBarChartFilter = new BrowserBarChartFilter(this);
+
         configBarChart(ratingChart);
         configBarChart(labelChart);
 
-        setRatingData(ratingChart);
-        setLabelData(labelChart);
+        if(DummyStorage.reviews != null) {
+            setRatingData(DummyStorage.reviews);
+            setLabelData(DummyStorage.reviews);
+        }
 
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DataUpdated event) {
+        ArrayList<Review> reviews = DummyStorage.reviews;
+        setRatingData(DummyStorage.reviews);
+        setLabelData(DummyStorage.reviews);
+    };
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(BrowserFilterEvent event) {
+        ArrayList<String> selectedBrowsers = event.getSelectedBrowsers();
+
+        browserBarChartFilter.filter(
+                (selectedBrowsers.size() != 0) ? selectedBrowsers.toString() : null);
+    };
+
     private void configBarChart(BarChart chart) {
-        chart.setOnChartValueSelectedListener(this);
         chart.setDrawBarShadow(false);
         chart.setDrawValueAboveBar(true);
 
@@ -107,10 +140,10 @@ public class BarChartFragment extends Fragment implements
         l.setXEntrySpace(4f);
     }
 
-    private void setRatingData(BarChart chart) {
+    public void setRatingData(ArrayList<Review> reviews) {
+        BarChart chart = ratingChart;
         float ratingsCount[] = new float[5];
 
-        ArrayList<Review> reviews = DummyStorage.reviews;
         for (Review review : reviews) {
                 ratingsCount[review.getRating() - 1]++;
         }
@@ -131,8 +164,9 @@ public class BarChartFragment extends Fragment implements
 
     }
 
-    private void setLabelData(BarChart chart) {
-        Map<String, Integer> labelCount = getLabelCount();
+    public void setLabelData(ArrayList<Review> reviews) {
+        BarChart chart = labelChart;
+        Map<String, Integer> labelCount = getLabelCount(reviews);
         final List<String> labels = new ArrayList<>();
         for (String label : labelCount.keySet()) {
             labels.add(label);
@@ -165,8 +199,7 @@ public class BarChartFragment extends Fragment implements
 
     }
 
-    private Map<String, Integer> getLabelCount() {
-        ArrayList<Review> reviews = DummyStorage.reviews;
+    private Map<String, Integer> getLabelCount(ArrayList<Review> reviews) {
         Map<String,Integer> labelCount = new HashMap<>();
         for (Review review : reviews) {
             ArrayList<String> labels = review.getLabels();
@@ -185,27 +218,4 @@ public class BarChartFragment extends Fragment implements
 
     protected RectF mOnValueSelectedRectF = new RectF();
 
-    @SuppressLint("NewApi")
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-
-//        if (e == null)
-//            return;
-//
-//        RectF bounds = mOnValueSelectedRectF;
-//        mChart.getBarBounds((BarEntry) e, bounds);
-//        MPPointF position = mChart.getPosition(e, AxisDependency.LEFT);
-//
-//        Log.i("bounds", bounds.toString());
-//        Log.i("position", position.toString());
-//
-//        Log.i("x-index",
-//                "low: " + mChart.getLowestVisibleX() + ", high: "
-//                        + mChart.getHighestVisibleX());
-//
-//        MPPointF.recycleInstance(position);
-    }
-
-    @Override
-    public void onNothingSelected() { }
 }

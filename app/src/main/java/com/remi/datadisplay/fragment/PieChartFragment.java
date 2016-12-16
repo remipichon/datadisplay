@@ -76,14 +76,14 @@ public class PieChartFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(DataUpdated event) {
         ArrayList<Review> reviews = DummyStorage.reviews;
         setBrowserData(reviews);
         setPlatformData(reviews);
     };
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(BrowserFilterEvent event) {
         ArrayList<String> selectedBrowsers = event.getSelectedBrowsers();
 
