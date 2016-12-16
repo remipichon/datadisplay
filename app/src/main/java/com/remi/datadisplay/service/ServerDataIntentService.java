@@ -4,8 +4,11 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import com.remi.datadisplay.DummyStorage;
+import com.remi.datadisplay.event.DataUpdated;
 import com.remi.datadisplay.model.Review;
 import com.remi.datadisplay.model.ReviewsDTO;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,6 +54,7 @@ public class ServerDataIntentService extends IntentService {
         //TODO what to do whi data ?
         System.out.println("reviews" + reviews);
         DummyStorage.reviews = reviews;
+        EventBus.getDefault().post(new DataUpdated());
 
     }
 }

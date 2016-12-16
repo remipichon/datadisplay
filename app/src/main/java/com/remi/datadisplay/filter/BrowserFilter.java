@@ -7,6 +7,7 @@ import com.remi.datadisplay.DummyStorage;
 import com.remi.datadisplay.model.Review;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class BrowserFilter extends Filter {
 
@@ -17,14 +18,23 @@ public abstract class BrowserFilter extends Filter {
 
         FilterResults result = new FilterResults();
         if (constraint != null && constraint.toString().length() > 0) {
+
+            ArrayList<String> selectedBrowsers = new ArrayList<>(Arrays.asList(
+                    ((String) constraint).substring(1, constraint.length() - 1).split(", "))
+            );
+
+
             constraint = constraint.toString().toLowerCase();
             ArrayList<Review> filteredItems = new ArrayList<>();
 
             for (int i = 0, l = reviews.size(); i < l; i++) {
                 Review review = reviews.get(i);
                 //effective search pattern
-                if (review.getBrowserName().toLowerCase().equals(constraint))
-                    filteredItems.add(review);
+                String browserName = review.getBrowserName();
+                for (String selectedBrowser : selectedBrowsers) {
+                    if (browserName.equals(selectedBrowser))
+                        filteredItems.add(review);
+                }
             }
             result.count = filteredItems.size();
             result.values = filteredItems;

@@ -34,7 +34,7 @@ public class AverageRatingMapsFragment extends MapsFragment {
         setUpCluster(reviews);
     }
 
-    public void setUpCluster(ArrayList<Review> reviews) {
+    private void setUpCluster(ArrayList<Review> reviews) {
         // Initialize the manager with the context and the map.
         mClusterManager = new ClusterManager<AverageRating>(this.getActivity(), googleMap);
 
@@ -48,7 +48,7 @@ public class AverageRatingMapsFragment extends MapsFragment {
         addItems(reviews);
     }
 
-    private void addItems(ArrayList<Review> reviews) {
+    public void addItems(ArrayList<Review> reviews) {
 
         //TODO use Java8 and Jack ToolChain (but disable Instant Run)
         //group by city

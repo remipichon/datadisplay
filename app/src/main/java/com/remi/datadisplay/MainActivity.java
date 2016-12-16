@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupWindow;
 
+import com.remi.datadisplay.event.BrowserFilterEvent;
+import com.remi.datadisplay.event.DataUpdated;
 import com.remi.datadisplay.fragment.AllReviewsMapsFragment;
 import com.remi.datadisplay.fragment.BarChartFragment;
 import com.remi.datadisplay.fragment.DoubleMapsFragment;
@@ -28,6 +30,10 @@ import com.remi.datadisplay.fragment.ListFragment;
 import com.remi.datadisplay.fragment.PieChartFragment;
 import com.remi.datadisplay.model.Review;
 import com.remi.datadisplay.service.ServerDataIntentService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private PopupWindow popWindow;
+    private ArrayList<String> selectedBrowsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,17 +67,28 @@ public class MainActivity extends AppCompatActivity
         Intent serverDataIntent = new Intent(this,ServerDataIntentService.class);
         startService(serverDataIntent);
 
+        selectedBrowsers = new ArrayList<>();
+
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DataUpdated event) {
+
+        setupPopup(findViewById(R.id.content_frame));
+
+        Snackbar.make(findViewById(R.id.content_frame), "Data is ready, you can now use the filter", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
+
+    };
 
     private void setUpFloatingButton() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onShowPopup(findViewById(R.id.content_frame));
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+                // show the popup at bottom of the screen and set some margin at bottom ie,
+                popWindow.showAtLocation(findViewById(R.id.content_frame), Gravity.BOTTOM, 0,200);            }
         });
     }
 
@@ -85,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void onShowPopup(View v){
+    public void setupPopup(View v){
 
         final View popupView = getLayoutInflater().inflate(R.layout.common_filter_popup, null,false);
         // get device size
@@ -102,8 +120,7 @@ public class MainActivity extends AppCompatActivity
         // make it outside touchable to dismiss the popup window
         popWindow.setOutsideTouchable(true);
 
-        // show the popup at bottom of the screen and set some margin at bottom ie,
-        popWindow.showAtLocation(v, Gravity.BOTTOM, 0,200);
+
 
         //TODO add transition
 
@@ -135,11 +152,17 @@ public class MainActivity extends AppCompatActivity
                         public void chipSelected(int index) {
                             String browser = browsers[index];
                             System.out.println("browser selected "+browser);
+                            selectedBrowsers.add(browser);
+                            EventBus.getDefault().post(new BrowserFilterEvent(selectedBrowsers));
+
                         }
                         @Override
                         public void chipDeselected(int index) {
                             String browser = browsers[index];
                             System.out.println("browser deselected "+browser);
+                            selectedBrowsers.remove(browser);
+                            EventBus.getDefault().post(new BrowserFilterEvent(selectedBrowsers));
+
                         }
                 })
                 .build();
@@ -209,4 +232,17 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.content_frame, fragment).commit();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
 }

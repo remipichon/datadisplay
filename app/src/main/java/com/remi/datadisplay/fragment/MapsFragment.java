@@ -29,7 +29,7 @@ public abstract class MapsFragment extends Fragment implements OnMapReadyCallbac
     protected GoogleMap googleMap;
     protected MapView mMapView;
 
-    abstract public void setUpCluster(ArrayList<Review> reviews);
+    abstract public void addItems(ArrayList<Review> reviews);
 
 
         @Nullable
