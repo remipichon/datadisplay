@@ -7,29 +7,30 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="Maps" />
         <item
-            android:id="@+id/nav_list"
+            android:id="@+id/nav_bar_chart"
             android:icon="@drawable/ic_menu_gallery"
             android:title="List" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_pie_chart"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="Slideshow" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="About">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_github"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Github" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_linkedin"
+                android:icon="@drawable/ic_menu_share"
+                android:title="LinkedIn" />
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Feedback" />
+
         </menu>
     </item>
 

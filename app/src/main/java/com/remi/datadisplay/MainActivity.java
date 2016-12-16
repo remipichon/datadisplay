@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -22,10 +23,8 @@ import android.widget.PopupWindow;
 
 import com.remi.datadisplay.event.BrowserFilterEvent;
 import com.remi.datadisplay.event.DataUpdated;
-import com.remi.datadisplay.fragment.AllReviewsMapsFragment;
 import com.remi.datadisplay.fragment.BarChartFragment;
 import com.remi.datadisplay.fragment.DoubleMapsFragment;
-import com.remi.datadisplay.fragment.ListFragment;
 import com.remi.datadisplay.fragment.PieChartFragment;
 import com.remi.datadisplay.model.Review;
 import com.remi.datadisplay.service.ServerDataIntentService;
@@ -59,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setUpFloatingButton();
 
         setUpNavigationDrawer(toolbar);
+
+        setupNavBarLink();
 
         //get data from server
         Intent serverDataIntent = new Intent(this,ServerDataIntentService.class);
@@ -104,17 +105,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_maps) {
-            this.startFragment(AllReviewsMapsFragment.class);
-        } else if (id == R.id.nav_list) {
-            this.startFragment(ListFragment.class);
-        } else if (id == R.id.nav_slideshow) {
             this.startFragment(DoubleMapsFragment.class);
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_bar_chart) {
             this.startFragment(BarChartFragment.class);
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_pie_chart) {
             this.startFragment(PieChartFragment.class);
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -224,6 +219,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .build();
 
 
+    }
+
+    private void setupNavBarLink() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav_github).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/remipichon/datadisplay"));
+                startActivity(browserIntent);
+                return false;
+            }
+        });
+        navigationView.getMenu().findItem(R.id.nav_linkedin).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/remipichon"));
+                startActivity(browserIntent);
+                return false;
+            }
+        });
+        navigationView.getMenu().findItem(R.id.nav_feedback).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("message/rfc822");
+                i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"pichon.remi.pr@gmail.com"});
+                i.putExtra(Intent.EXTRA_SUBJECT, "An awesome app !");
+                i.putExtra(Intent.EXTRA_TEXT   , "You are hired !");
+                startActivity(Intent.createChooser(i, "Send mail..."));
+                return false;
+            }
+        });
     }
 
 
