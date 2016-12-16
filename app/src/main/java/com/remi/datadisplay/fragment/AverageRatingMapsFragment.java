@@ -29,10 +29,12 @@ public class AverageRatingMapsFragment extends MapsFragment {
     @Override
     public void onMapReady(GoogleMap map) {
         super.onMapReady(map);
-        setUpCluster();
+
+        ArrayList<Review> reviews = DummyStorage.reviews;
+        setUpCluster(reviews);
     }
 
-    private void setUpCluster() {
+    public void setUpCluster(ArrayList<Review> reviews) {
         // Initialize the manager with the context and the map.
         mClusterManager = new ClusterManager<AverageRating>(this.getActivity(), googleMap);
 
@@ -43,12 +45,10 @@ public class AverageRatingMapsFragment extends MapsFragment {
         googleMap.setOnMarkerClickListener(mClusterManager);
 
         // Add cluster items (markers) to the cluster manager.
-        addItems();
+        addItems(reviews);
     }
 
-    private void addItems() {
-
-        ArrayList<Review> reviews = DummyStorage.reviews;
+    private void addItems(ArrayList<Review> reviews) {
 
         //TODO use Java8 and Jack ToolChain (but disable Instant Run)
         //group by city

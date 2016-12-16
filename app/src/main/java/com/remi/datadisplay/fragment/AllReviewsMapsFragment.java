@@ -4,6 +4,8 @@ package com.remi.datadisplay.fragment;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.maps.android.clustering.ClusterManager;
 import com.remi.datadisplay.DummyStorage;
+import com.remi.datadisplay.filter.BrowserFilter;
+import com.remi.datadisplay.filter.BrowserMapsFilter;
 import com.remi.datadisplay.model.Review;
 
 import java.util.ArrayList;
@@ -12,15 +14,23 @@ import java.util.ArrayList;
 public class AllReviewsMapsFragment extends MapsFragment  {
 
     ClusterManager<Review> mClusterManager;
+    private BrowserFilter browserFilter;
 
     @Override
     public void onMapReady(GoogleMap map) {
         super.onMapReady(map);
 
-        setUpCluster();
+
+        browserFilter = new BrowserMapsFilter(this);
+
+
+        ArrayList<Review> reviews = DummyStorage.reviews;
+        setUpCluster(reviews);
+
+        browserFilter.filter("IE");
     }
 
-    private void setUpCluster() {
+     public void setUpCluster(ArrayList<Review> reviews) {
 
         // Initialize the manager with the context and the map.
         mClusterManager = new ClusterManager<Review>(this.getActivity(), googleMap);
@@ -30,12 +40,12 @@ public class AllReviewsMapsFragment extends MapsFragment  {
         googleMap.setOnMarkerClickListener(mClusterManager);
 
         // Add cluster items (markers) to the cluster manager.
-        addItems();
+        addItems(reviews);
     }
 
-    private void addItems() {
+    private void addItems(ArrayList<Review> reviews) {
 
-        ArrayList<Review> reviews = DummyStorage.reviews;
+        mClusterManager.clearItems();
         for (Review review : reviews) {
             mClusterManager.addItem(review);
         }

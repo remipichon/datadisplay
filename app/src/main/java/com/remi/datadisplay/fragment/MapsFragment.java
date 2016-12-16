@@ -18,6 +18,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.remi.datadisplay.R;
+import com.remi.datadisplay.model.Review;
+
+import java.util.ArrayList;
 
 import static com.remi.datadisplay.R.id.mapView;
 
@@ -26,7 +29,10 @@ public abstract class MapsFragment extends Fragment implements OnMapReadyCallbac
     protected GoogleMap googleMap;
     protected MapView mMapView;
 
-    @Nullable
+    abstract public void setUpCluster(ArrayList<Review> reviews);
+
+
+        @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
