@@ -48,7 +48,7 @@ public abstract class MapsFragment extends Fragment implements OnMapReadyCallbac
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(52.379189, 4.899431), 10));
 
         //display zoom button
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
+//        googleMap.getUiSettings().setZoomControlsEnabled(true);
         //display my location button
         if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
