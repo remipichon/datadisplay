@@ -8,7 +8,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.remi.datadisplay.DummyStorage;
@@ -21,35 +20,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AverageRatingMapsFragment extends MapsFragment {
-
-    ClusterManager<AverageRating> mClusterManager;
+public class AverageRatingMapsFragment extends MapsFragment<AverageRating> {
 
 
     @Override
     public void onMapReady(GoogleMap map) {
         super.onMapReady(map);
 
-        ArrayList<Review> reviews = DummyStorage.reviews;
-        setUpCluster(reviews);
+        setUpCluster();
+        if(DummyStorage.reviews != null)addItems(DummyStorage.reviews);
     }
 
-    private void setUpCluster(ArrayList<Review> reviews) {
-        // Initialize the manager with the context and the map.
-        mClusterManager = new ClusterManager<AverageRating>(this.getActivity(), googleMap);
-
+    protected void setUpCluster() {
+        super.setUpCluster();
         mClusterManager.setRenderer(new AverageRatingRendered());
-
-        // Point the map's listeners at the listeners implemented by the cluster manager.
-        googleMap.setOnCameraIdleListener(mClusterManager);
-        googleMap.setOnMarkerClickListener(mClusterManager);
-
-        // Add cluster items (markers) to the cluster manager.
-        addItems(reviews);
     }
 
     public void addItems(ArrayList<Review> reviews) {
-
+        mClusterManager.clearItems();
         //TODO use Java8 and Jack ToolChain (but disable Instant Run)
         //group by city
         HashMap<String, List<Integer>> ratingByCities = new HashMap<String, List<Integer>>();
@@ -84,6 +72,7 @@ public class AverageRatingMapsFragment extends MapsFragment {
 
             mClusterManager.addItem(new AverageRating(position, average, city));
         }
+        mClusterManager.cluster();
     }
 
     @NonNull

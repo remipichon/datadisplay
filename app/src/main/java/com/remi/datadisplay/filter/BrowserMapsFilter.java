@@ -1,17 +1,18 @@
 package com.remi.datadisplay.filter;
 
 
+import com.google.maps.android.clustering.ClusterItem;
 import com.remi.datadisplay.fragment.MapsFragment;
 import com.remi.datadisplay.model.Review;
 
 import java.util.ArrayList;
 
-public class BrowserMapsFilter extends BrowserFilter {
+public class BrowserMapsFilter<A extends ClusterItem> extends BrowserFilter {
 
 
-    private final MapsFragment mapsFragment;
+    private final MapsFragment<A> mapsFragment;
 
-    public BrowserMapsFilter(MapsFragment mapsFragment) {
+    public BrowserMapsFilter(MapsFragment<A> mapsFragment) {
         this.mapsFragment = mapsFragment;
 
     }

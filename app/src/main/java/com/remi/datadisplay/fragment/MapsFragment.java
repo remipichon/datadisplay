@@ -1,15 +1,10 @@
 package com.remi.datadisplay.fragment;
 
-import android.Manifest;
 import android.app.Fragment;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,22 +12,32 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
+import com.remi.datadisplay.DummyStorage;
 import com.remi.datadisplay.R;
+import com.remi.datadisplay.event.BrowserFilterEvent;
+import com.remi.datadisplay.event.DataUpdated;
+import com.remi.datadisplay.filter.BrowserMapsFilter;
 import com.remi.datadisplay.model.Review;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
 import static com.remi.datadisplay.R.id.mapView;
 
-public abstract class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
-    protected static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 24;
+public abstract class MapsFragment<A extends ClusterItem> extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     protected GoogleMap googleMap;
     protected MapView mMapView;
+    protected BrowserMapsFilter browserFilter;
+    ClusterManager<A> mClusterManager;
 
     abstract public void addItems(ArrayList<Review> reviews);
 
 
-        @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -43,67 +48,56 @@ public abstract class MapsFragment extends Fragment implements OnMapReadyCallbac
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
 
+        browserFilter = new BrowserMapsFilter(this);
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-
-        // Position the map.
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(52.379189, 4.899431), 10));
-
-        //display zoom button
-//        googleMap.getUiSettings().setZoomControlsEnabled(true);
-        //display my location button
-        if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this.getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_FINE_LOCATION);
-            }
-        }
         mMapView.onResume();
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DataUpdated event) {
+        ArrayList<Review> reviews = DummyStorage.reviews;
+        addItems(reviews);
+    };
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(BrowserFilterEvent event) {
+        ArrayList<String> selectedBrowsers = event.getSelectedBrowsers();
+
+        browserFilter.filter(
+                (selectedBrowsers.size() != 0) ? selectedBrowsers.toString() : null);
+    };
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    protected void setUpCluster() {
+        // Initialize the manager with the context and the map.
+        mClusterManager = new ClusterManager<>(this.getActivity(), googleMap);
 
-                    // permission was granted
-
-                    //TODO why do I need that again ?
-                    if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    googleMap.setMyLocationEnabled(true);
-
-
-                } else {
-
-                    // permission denied
-                    Toast toast = Toast.makeText(getActivity(), "You will not be able to locate yourself", Toast.LENGTH_SHORT);
-                    toast.show();
-
-                }
-                return;
-            }
-
-        }
+        // Point the map's listeners at the listeners implemented by the cluster manager.
+        googleMap.setOnCameraIdleListener(mClusterManager);
+        googleMap.setOnMarkerClickListener(mClusterManager);
     }
+
 }
