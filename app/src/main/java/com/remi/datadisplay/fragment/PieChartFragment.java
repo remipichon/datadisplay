@@ -18,8 +18,15 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.remi.datadisplay.DummyStorage;
 import com.remi.datadisplay.R;
+import com.remi.datadisplay.event.BrowserFilterEvent;
+import com.remi.datadisplay.event.DataUpdated;
+import com.remi.datadisplay.filter.BrowserPieChartFilter;
 import com.remi.datadisplay.model.Review;
 import com.remi.datadisplay.util.MapUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +37,7 @@ public class PieChartFragment extends Fragment {
 
     protected PieChart browserChart;
     protected PieChart platformChart;
+    private BrowserPieChartFilter browserFilter;
 
 
     @Nullable
@@ -45,57 +53,63 @@ public class PieChartFragment extends Fragment {
         configPieChart(browserChart);
         configPieChart(platformChart);
 
-        setBrowserData(browserChart);
-        setPlatformData(platformChart);
+        if(DummyStorage.reviews != null) {
+            setBrowserData(DummyStorage.reviews);
+            setPlatformData(DummyStorage.reviews);
+        }
+
+        browserFilter = new BrowserPieChartFilter(this);
 
         return view;
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DataUpdated event) {
+        ArrayList<Review> reviews = DummyStorage.reviews;
+        setBrowserData(reviews);
+        setPlatformData(reviews);
+    };
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(BrowserFilterEvent event) {
+        ArrayList<String> selectedBrowsers = event.getSelectedBrowsers();
+
+        browserFilter.filter(
+                (selectedBrowsers.size() != 0) ? selectedBrowsers.toString() : null);
+    };
+
     private void configPieChart(PieChart chart) {
         chart.setUsePercentValues(true);
         chart.getDescription().setEnabled(false);
-//        chart.setExtraOffsets(5, 10, 5, 5);
-
         chart.setDragDecelerationFrictionCoef(0.95f);
-
-        //chart.setCenterTextTypeface(mTfLight);
-        //chart.setCenterText(generateCenterSpannableText());
-
         chart.setDrawHoleEnabled(true);
         chart.setHoleColor(Color.WHITE);
-
-//        chart.setTransparentCircleColor(Color.WHITE);
-//        chart.setTransparentCircleAlpha(110);
-
         chart.setHoleRadius(40f);
-//        chart.setTransparentCircleRadius(61f);
-
-//        chart.setDrawCenterText(true);
-
         chart.setRotationAngle(0);
-        // enable rotation of the chart by touch
         chart.setRotationEnabled(true);
         chart.setHighlightPerTapEnabled(true);
-
-        // chart.setUnit(" €");
-        // chart.setDrawUnitsInChart(true);
-
-        //setData(4, 100);
-
         chart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
-        // chart.spin(2000, 0, 360);
-
-       chart.getLegend().setEnabled(false);
-
-        // entry label styling
+        chart.getLegend().setEnabled(false);
         chart.setEntryLabelColor(Color.BLACK);
-        //chart.setEntryLabelTypeface(mTfRegular);
         chart.setEntryLabelTextSize(12f);
     }
 
-    private void setBrowserData(PieChart chart) {
+    public void setBrowserData(ArrayList<Review> reviews) {
+        PieChart chart = browserChart;
         Map<String,Integer> browsersCount = new HashMap<>();
-        ArrayList<Review> reviews = DummyStorage.reviews;
         for (Review review : reviews) {
             if(!browsersCount.containsKey(review.getBrowserName())){
                 browsersCount.put(review.getBrowserName(),1);
@@ -133,9 +147,9 @@ public class PieChartFragment extends Fragment {
 
     }
 
-    private void setPlatformData(PieChart chart) {
+    public void setPlatformData(ArrayList<Review> reviews) {
+        PieChart chart = platformChart;
         Map<String,Integer> platformsCount = new HashMap<>();
-        ArrayList<Review> reviews = DummyStorage.reviews;
         for (Review review : reviews) {
             if(!platformsCount.containsKey(review.getPlatform())){
                 platformsCount.put(review.getPlatform(),1);
