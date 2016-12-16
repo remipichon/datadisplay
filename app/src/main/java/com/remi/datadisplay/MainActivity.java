@@ -16,10 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.remi.datadisplay.fragment.AllReviewsMapsFragment;
 import com.remi.datadisplay.fragment.BarChartFragment;
 import com.remi.datadisplay.fragment.DoubleMapsFragment;
 import com.remi.datadisplay.fragment.ListFragment;
-import com.remi.datadisplay.fragment.AllReviewsMapsFragment;
+import com.remi.datadisplay.fragment.PieChartFragment;
 import com.remi.datadisplay.service.ServerDataIntentService;
 
 import java.lang.reflect.Constructor;
@@ -107,9 +108,8 @@ public class MainActivity extends AppCompatActivity
             this.startFragment(DoubleMapsFragment.class);
         } else if (id == R.id.nav_manage) {
             this.startFragment(BarChartFragment.class);
-
         } else if (id == R.id.nav_share) {
-
+            this.startFragment(PieChartFragment.class);
         } else if (id == R.id.nav_send) {
 
         }
