@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.remi.datadisplay.fragment.BarChartFragment;
 import com.remi.datadisplay.fragment.DoubleMapsFragment;
 import com.remi.datadisplay.fragment.ListFragment;
 import com.remi.datadisplay.fragment.AllReviewsMapsFragment;
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
             this.startFragment(DoubleMapsFragment.class);
         } else if (id == R.id.nav_manage) {
+            this.startFragment(BarChartFragment.class);
 
         } else if (id == R.id.nav_share) {
 
