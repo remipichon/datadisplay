@@ -41,6 +41,9 @@ dependencies {
     compile 'com.google.maps.android:android-maps-utils:0.4+'
 
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
+    
+    compile 'com.github.fiskurgit:ChipCloud:2.1.0'
+
 
 
 }

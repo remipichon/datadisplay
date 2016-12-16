@@ -3,6 +3,7 @@ package com.remi.datadisplay;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,10 +26,17 @@ import com.remi.datadisplay.fragment.BarChartFragment;
 import com.remi.datadisplay.fragment.DoubleMapsFragment;
 import com.remi.datadisplay.fragment.ListFragment;
 import com.remi.datadisplay.fragment.PieChartFragment;
+import com.remi.datadisplay.model.Review;
 import com.remi.datadisplay.service.ServerDataIntentService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import eu.fiskur.chipcloud.ChipCloud;
+import eu.fiskur.chipcloud.ChipListener;
 
 
 public class MainActivity extends AppCompatActivity
@@ -98,6 +106,44 @@ public class MainActivity extends AppCompatActivity
         popWindow.showAtLocation(v, Gravity.BOTTOM, 0,200);
 
         //TODO add transition
+
+
+
+        //configure popup
+        ChipCloud chipCloud = (ChipCloud) popupView.findViewById(R.id.chip_cloud);
+
+        final Set<String> labels = new HashSet<>();
+
+        ArrayList<Review> reviews = DummyStorage.reviews;
+        for (Review review : reviews) {
+            labels.add(review.getBrowserName());
+        }
+
+        final String[] browsers = labels.toArray(new String[labels.size()]);
+        new ChipCloud.Configure()
+                .chipCloud(chipCloud)
+                .selectedColor(Color.parseColor("#ff00cc"))
+                .selectedFontColor(Color.parseColor("#ffffff"))
+                .deselectedColor(Color.parseColor("#e1e1e1"))
+                .deselectedFontColor(Color.parseColor("#333333"))
+                .selectTransitionMS(500)
+                .labels(browsers)
+                .deselectTransitionMS(250)
+                .mode(ChipCloud.Mode.MULTI)
+                .chipListener(new ChipListener() {
+                        @Override
+                        public void chipSelected(int index) {
+                            String browser = browsers[index];
+                            System.out.println("browser selected "+browser);
+                        }
+                        @Override
+                        public void chipDeselected(int index) {
+                            String browser = browsers[index];
+                            System.out.println("browser deselected "+browser);
+                        }
+                })
+                .build();
+
 
     }
 
