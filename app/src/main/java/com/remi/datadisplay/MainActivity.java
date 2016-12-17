@@ -25,6 +25,7 @@ import com.remi.datadisplay.event.BrowserFilterEvent;
 import com.remi.datadisplay.event.DataUpdated;
 import com.remi.datadisplay.fragment.BarChartFragment;
 import com.remi.datadisplay.fragment.DoubleMapsFragment;
+import com.remi.datadisplay.fragment.HomeFragment;
 import com.remi.datadisplay.fragment.PieChartFragment;
 import com.remi.datadisplay.model.Review;
 import com.remi.datadisplay.service.ServerDataIntentService;
@@ -64,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //get data from server
         Intent serverDataIntent = new Intent(this,ServerDataIntentService.class);
         startService(serverDataIntent);
+
+        startFragment(HomeFragment.class);
+
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)

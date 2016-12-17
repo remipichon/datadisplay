@@ -5,15 +5,15 @@
         <item
             android:id="@+id/nav_maps"
             android:icon="@drawable/ic_map"
-            android:title="Maps" />
+            android:title="Rating and Average Rating" />
         <item
             android:id="@+id/nav_bar_chart"
             android:icon="@drawable/ic_bart_chart"
-            android:title="List" />
+            android:title="Rating and Label" />
         <item
             android:id="@+id/nav_pie_chart"
             android:icon="@drawable/ic_pie_chart"
-            android:title="Slideshow" />
+            android:title="Browser and Platform" />
     </group>
 
     <item android:title="About">
